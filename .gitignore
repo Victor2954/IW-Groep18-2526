@@ -1,5 +1,4 @@
 node_modules/
-.env
 .env.local
 .env.*.local
 *.log
@@ -9,4 +8,3 @@ npm-debug.log*
 .idea/
 dist/
 coverage/
-.claude/

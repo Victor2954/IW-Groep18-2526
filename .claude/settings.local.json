@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rsync -a --exclude='node_modules' /c/pingfin/ /c/IW-Groep18-2526/.claude/worktrees/friendly-gould-fe0bff/)",
+      "Bash(git -C /c/IW-Groep18-2526/.claude/worktrees/friendly-gould-fe0bff status)",
+      "Bash(git -C /c/IW-Groep18-2526/.claude/worktrees/friendly-gould-fe0bff remote -v)",
+      "Bash(git -C /c/IW-Groep18-2526/.claude/worktrees/friendly-gould-fe0bff add -A)",
+      "Bash(git -C /c/IW-Groep18-2526/.claude/worktrees/friendly-gould-fe0bff status --ignored)"
+    ]
+  }
+}
