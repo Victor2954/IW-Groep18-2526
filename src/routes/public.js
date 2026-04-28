@@ -71,12 +71,10 @@ router.get('/info', bankContext, (req, res) => {
     const bank = banks.find(b => b.bic === req.bankBic);
     return ok(res, {
         team: 18,
-        coaches: ['Rogier van der Linde', 'Polina Kozlova'],
-        room: 'HER 3 - 5306',
+        members: ['Danick , Saartje, Victor, Mesut'],
         bank: {
             bic:  bank.bic,
             name: bank.name,
-            type: 'regular bank (originating + beneficiary)',
         },
         all_managed_banks: banks.map(b => ({ bic: b.bic, name: b.name })),
     });
