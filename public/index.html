@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PingFin Admin · Team 18</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<!-- ===== LOGIN OVERLAY ===== -->
+<div id="login-overlay" class="login-overlay">
+    <div class="login-box">
+        <div class="login-brand">
+            <span class="dot"></span>
+            <span>PingFin · Team 18</span>
+        </div>
+        <p class="login-hint">Voer je admin token in om verder te gaan.</p>
+        <input type="password" id="login-token" placeholder="ADMIN_TOKEN" autofocus>
+        <button id="login-submit">Verbinden</button>
+        <div id="login-error" class="login-error"></div>
+    </div>
+</div>
+
+<!-- ===== TOP BAR ===== -->
+<header class="topbar">
+    <div class="brand">
+        <span class="dot"></span>
+        <span class="brand-name">PingFin</span>
+        <span class="brand-sub">Team 18</span>
+    </div>
+    <div class="bank-switcher">
+        <span class="label">Active bank:</span>
+        <button class="bank-btn" data-bic="BYBBBEBB">BYBBBEBB</button>
+        <button class="bank-btn" data-bic="GOCFBEB2">GOCFBEB2</button>
+    </div>
+    <div class="status-bar">
+        <span id="cb-status" class="status">CB: <em>—</em></span>
+        <span id="last-refresh" class="status">Last refresh: <em>—</em></span>
+        <button id="logout-btn" class="ghost-btn" title="Logout">⏻</button>
+    </div>
+</header>
+
+<!-- ===== MAIN GRID ===== -->
+<main class="grid">
+
+    <!-- LEFT COLUMN: Accounts + Transfer -->
+    <section class="panel" id="panel-accounts">
+        <div class="panel-head">
+            <h2>Accounts</h2>
+            <button class="refresh-btn" data-target="accounts">↻</button>
+        </div>
+        <div class="panel-body">
+            <div id="accounts-table" class="data-table"></div>
+        </div>
+    </section>
+
+    <section class="panel" id="panel-transfer">
+        <div class="panel-head">
+            <h2>Transfer</h2>
+        </div>
+        <div class="panel-body">
+            <form id="transfer-form" class="form">
+                <label>From IBAN (OA)
+                    <select id="tf-oa" required></select>
+                </label>
+                <label>To bank (BB)
+                    <input type="text" id="tf-bb" placeholder="BIC, e.g. BYBBBEBB" required maxlength="11">
+                </label>
+                <label>To IBAN (BA)
+                    <input type="text" id="tf-ba" placeholder="BE..." required>
+                </label>
+                <label>Amount (EUR)
+                    <input type="number" id="tf-amount" step="0.01" min="0.01" max="500" required>
+                </label>
+                <label>Message
+                    <input type="text" id="tf-message" placeholder="payment purpose" required>
+                </label>
+                <div class="form-actions">
+                    <button type="submit" id="tf-submit" class="primary-btn">Add to PO_NEW</button>
+                    <button type="button" id="tf-process-after" class="secondary-btn" title="Process PO_NEW immediately after add">+ Process now</button>
+                </div>
+                <div id="tf-result" class="form-result"></div>
+            </form>
+
+            <div class="generator-block">
+                <h3>Quick generator</h3>
+                <div class="gen-row">
+                    <input type="number" id="gen-count" value="5" min="1" max="50">
+                    <button id="gen-btn" class="secondary-btn">Generate random</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MIDDLE COLUMN: Action buttons + flow tables -->
+    <section class="panel panel-wide" id="panel-flow">
+        <div class="panel-head">
+            <h2>SEPA flow</h2>
+            <div class="action-row">
+                <button class="action-btn" id="btn-process-new">Process PO_NEW</button>
+                <button class="action-btn" id="btn-fetch-poin">Fetch PO_IN</button>
+                <button class="action-btn" id="btn-process-poin">Process PO_IN</button>
+                <button class="action-btn" id="btn-fetch-ackin">Fetch ACK_IN</button>
+                <button class="action-btn destructive" id="btn-fullcycle" title="Full self-test cycle">Full Cycle Test</button>
+            </div>
+        </div>
+        <div class="panel-body">
+
+            <div class="flow-grid">
+                <div class="flow-cell">
+                    <div class="flow-cell-head">
+                        <h3>PO_NEW</h3>
+                        <button class="refresh-btn" data-target="po_new">↻</button>
+                    </div>
+                    <div id="po_new-table" class="data-table small"></div>
+                </div>
+
+                <div class="flow-cell">
+                    <div class="flow-cell-head">
+                        <h3>PO_OUT</h3>
+                        <button class="refresh-btn" data-target="po_out">↻</button>
+                    </div>
+                    <div id="po_out-table" class="data-table small"></div>
+                </div>
+
+                <div class="flow-cell">
+                    <div class="flow-cell-head">
+                        <h3>PO_IN</h3>
+                        <button class="refresh-btn" data-target="po_in">↻</button>
+                    </div>
+                    <div id="po_in-table" class="data-table small"></div>
+                </div>
+
+                <div class="flow-cell">
+                    <div class="flow-cell-head">
+                        <h3>ACK_IN</h3>
+                        <button class="refresh-btn" data-target="ack_in">↻</button>
+                    </div>
+                    <div id="ack_in-table" class="data-table small"></div>
+                </div>
+
+                <div class="flow-cell">
+                    <div class="flow-cell-head">
+                        <h3>ACK_OUT</h3>
+                        <button class="refresh-btn" data-target="ack_out">↻</button>
+                    </div>
+                    <div id="ack_out-table" class="data-table small"></div>
+                </div>
+
+                <div class="flow-cell">
+                    <div class="flow-cell-head">
+                        <h3>Transactions <span class="muted">(last 50)</span></h3>
+                        <button class="refresh-btn" data-target="transactions">↻</button>
+                    </div>
+                    <div id="transactions-table" class="data-table small"></div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- RIGHT COLUMN: Activity log + Action result -->
+    <section class="panel" id="panel-log">
+        <div class="panel-head">
+            <h2>Activity Log</h2>
+            <div>
+                <span class="label">Auto-refresh</span>
+                <input type="checkbox" id="auto-refresh-log" checked>
+                <button class="refresh-btn" data-target="log">↻</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div id="log-stream" class="log-stream"></div>
+        </div>
+    </section>
+
+    <section class="panel" id="panel-result">
+        <div class="panel-head">
+            <h2>Last action result</h2>
+            <button class="ghost-btn" id="clear-result">clear</button>
+        </div>
+        <div class="panel-body">
+            <pre id="action-result" class="json-viewer">no action yet — press a button above</pre>
+        </div>
+    </section>
+
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>
